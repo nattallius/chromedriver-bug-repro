@@ -52,7 +52,20 @@ def test_should_be_able_to_navigate_to_google_com(driver):
     assert driver.title == "Google"
 
 
+from selenium.webdriver.common.by import By
+
+
 @pytest.mark.timeout(TIMEOUT)
 def test_issue_reproduction(driver):
-    """Add test reproducing the issue here."""
-    pass
+    """
+    This test reproduces an issue where dropdowns are misplaced.
+    It navigates to a page with a dropdown, clicks it, and takes a screenshot.
+    To confirm the bug, manually inspect the 'dropdown_test.png' screenshot
+    and verify that the dropdown menu appears in the top-left corner of the page
+    instead of below the dropdown element.
+    """
+    import os
+    driver.get("file://" + os.path.abspath("dropdown.html"))
+    dropdown = driver.find_element(By.TAG_NAME, "select")
+    dropdown.click()
+    driver.save_screenshot("dropdown_test.png")
