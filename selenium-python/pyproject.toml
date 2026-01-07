@@ -1,0 +1,7 @@
+[tool.black]
+line-length = 88
+target-version = ['py38']
+[tool.ruff]
+line-length = 88
+select = ["E", "F", "W", "I", "UP", "B", "A", "C4", "T20", "SIM", "ARG"]
+ignore = ["E501"]

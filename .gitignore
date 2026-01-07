@@ -1,0 +1,6 @@
+node_modules/
+.cache/
+.idea/
+chromedriver*.log
+*.iml
+.DS_Store

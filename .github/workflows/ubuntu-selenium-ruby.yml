@@ -1,0 +1,51 @@
+# Copyright 2025 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+name: Ubuntu Selenium Ruby
+
+on:
+  push:
+    paths:
+      - 'selenium-ruby/**'
+      - '.github/workflows/ubuntu-selenium-ruby.yml'
+  pull_request:
+    paths:
+      - 'selenium-ruby/**'
+      - '.github/workflows/ubuntu-selenium-ruby.yml'
+
+defaults:
+  run:
+    working-directory: selenium-ruby
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 3.2
+
+    - name: Install dependencies
+      run: bundle install
+
+    - name: Run tests
+      run: bundle exec rspec regression_spec.rb
+
+    - name: Dump log
+      if: always()
+      run: cat chromedriver.log
