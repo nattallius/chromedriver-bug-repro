@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-const { Builder } = require('selenium-webdriver');
+const { Builder, Key } = require('selenium-webdriver');
 const { expect } = require('expect');
 const chrome = require('selenium-webdriver/chrome');
 
@@ -33,6 +33,10 @@ describe('Selenium ChromeDriver', function () {
     // Replace the "stable" with the specific browser version if needed,
     // e.g. 'canary', '115' or '144.0.7534.0' for example.
     options.setBrowserVersion('stable');
+
+    if (process.env.CHROME_BINARY_PATH) {
+      options.setChromeBinaryPath(process.env.CHROME_BINARY_PATH);
+    }
 
     const service = new chrome.ServiceBuilder()
       .loggingTo('chromedriver.log')
@@ -58,7 +62,27 @@ describe('Selenium ChromeDriver', function () {
     expect(title).toBe('Google');
   });
 
-  it('ISSUE REPRODUCTION', async function () {
-    // Add test reproducing the issue here.
+  it('testSendKeysToElementDoesNotAppend', async function () {
+    // This test reproduces https://b.corp.google.com/issues/42323662.
+    // It is expected to fail.
+    await driver.get('data:text/html,<input>');
+    const input = await driver.findElement({tagName: 'input'});
+    await input.sendKeys('Hello World');
+    // Select 'World'
+    await driver.actions()
+      .click(input)
+      .sendKeys(
+        ...Array(5).fill(Key.ARROW_LEFT),
+        Key.SHIFT,
+        ...Array(5).fill(Key.ARROW_RIGHT),
+        Key.NULL,
+      )
+      .sendKeys('Universe')
+      .perform();
+    // The selected text should be replaced with the new text,
+    // not appended.
+    // This assertion is expected to fail because the current behavior
+    // appends the text 'Universe' instead of replacing 'World'.
+    expect(await input.getAttribute('value')).toBe('Hello Universe');
   });
 });

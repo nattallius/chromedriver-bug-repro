@@ -39,7 +39,13 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: 'latest'
-
+    
+    - name: Download chrome-headless-shell
+      run: |
+        npx @puppeteer/browsers install chrome-headless-shell@122.0.6261.0
+        echo "CHROME_BINARY_PATH=$(npx @puppeteer/browsers \
+          executablePath chrome-headless-shell)" >> $GITHUB_ENV
+    
     - name: Install dependencies
       working-directory: selenium-mochajs
       run: npm install
